@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
-"""Module that filters sensitive data in log messages."""
+"""Module that filters sensitive data and manages secure logging/database."""
 import re
 import logging
 from typing import List
+import os
+import mysql.connector
+from mysql.connector.connection import MySQLConnection
 
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
@@ -53,3 +56,21 @@ def get_logger() -> logging.Logger:
     handler.setFormatter(RedactingFormatter(fields=PII_FIELDS))
     logger.addHandler(handler)
     return logger
+
+
+def get_db() -> MySQLConnection:
+    """
+    Connects to a MySQL database using environment variables and returns
+    the connection object.
+    """
+    username = os.environ.get("PERSONAL_DATA_DB_USERNAME", "root")
+    password = os.environ.get("PERSONAL_DATA_DB_PASSWORD", "")
+    host = os.environ.get("PERSONAL_DATA_DB_HOST", "localhost")
+    database = os.environ.get("PERSONAL_DATA_DB_NAME")
+
+    return mysql.connector.connect(
+        user=username,
+        password=password,
+        host=host,
+        database=database
+    )
