@@ -5,11 +5,16 @@ import logging
 from typing import List
 
 
-def filter_datum(fields: List[str], redaction: str, message: str, separator: str) -> str:
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
+
+
+def filter_datum(fields: List[str], redaction: str,
+                 message: str, separator: str) -> str:
     """
     Obfuscate the values of specified fields in a log message.
     """
-    return re.sub(rf'({"|".join(fields)})=[^{separator}]*', rf'\1={redaction}', message)
+    pattern = rf'({"|".join(fields)})=[^{separator}]*'
+    return re.sub(pattern, rf'\1={redaction}', message)
 
 
 class RedactingFormatter(logging.Formatter):
@@ -18,7 +23,7 @@ class RedactingFormatter(logging.Formatter):
     """
 
     REDACTION = "***"
-    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    FORMAT = ("[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s")
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
@@ -32,5 +37,19 @@ class RedactingFormatter(logging.Formatter):
         """
         Format the log record and obfuscate sensitive fields.
         """
-        record.msg = filter_datum(self.fields, self.REDACTION, record.getMessage(), self.SEPARATOR)
+        record.msg = filter_datum(self.fields, self.REDACTION,
+                                  record.getMessage(), self.SEPARATOR)
         return super().format(record)
+
+
+def get_logger() -> logging.Logger:
+    """
+    Creates and returns a logger configured to redact PII fields from messages.
+    """
+    logger = logging.getLogger("user_data")
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    handler = logging.StreamHandler()
+    handler.setFormatter(RedactingFormatter(fields=PII_FIELDS))
+    logger.addHandler(handler)
+    return logger
