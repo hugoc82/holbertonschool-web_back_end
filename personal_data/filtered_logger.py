@@ -2,10 +2,9 @@
 """Module that filters sensitive data and manages secure logging/database."""
 import re
 import logging
-from typing import List
+from typing import List, Any
 import os
 import mysql.connector
-from mysql.connector.connection import MySQLConnection
 
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
@@ -58,7 +57,7 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def get_db() -> MySQLConnection:
+def get_db() -> Any:
     """
     Connects to a MySQL database using environment variables and returns
     the connection object.
@@ -74,3 +73,29 @@ def get_db() -> MySQLConnection:
         host=host,
         database=database
     )
+
+
+def main() -> None:
+    """
+    Connects to the database, retrieves all users and logs each record
+    with sensitive fields redacted.
+    """
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users;")
+    fields = [desc[0] for desc in cursor.description]
+    logger = get_logger()
+
+    for row in cursor:
+        row_dict = dict(zip(fields, row))
+        message = "; ".join(
+            f"{key}={value}" for key, value in row_dict.items()
+        ) + ";"
+        logger.info(message)
+
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
