@@ -4,6 +4,7 @@ Session Authentication module
 """
 
 from api.v1.auth.auth import Auth
+from models.user import User
 from os import getenv
 import uuid
 
@@ -20,48 +21,29 @@ class SessionAuth(Auth):
     def create_session(self, user_id: str = None) -> str:
         """
         Create a session ID for a given user_id.
-
-        Args:
-            user_id (str): The user ID to associate with a new session.
-
-        Returns:
-            str: The session ID created, or None if input is invalid.
         """
         if user_id is None:
             return None
         if not isinstance(user_id, str):
             return None
 
-        # Generate a new session ID
         session_id = str(uuid.uuid4())
-
-        # Store mapping of session_id -> user_id
         SessionAuth.user_id_by_session_id[session_id] = user_id
-
         return session_id
 
     def user_id_for_session_id(self, session_id: str = None) -> str:
         """
         Retrieve a user ID based on a given session ID.
-
-        Args:
-            session_id (str): The session ID.
-
-        Returns:
-            str: The user ID associated with the session ID,
-                 or None if not found or invalid.
         """
         if session_id is None:
             return None
         if not isinstance(session_id, str):
             return None
-
         return SessionAuth.user_id_by_session_id.get(session_id)
 
     def session_cookie(self, request=None):
         """
-        Returns the value of the cookie named by the env var SESSION_NAME
-        from the request cookies.
+        Returns the value of the cookie named by the env var SESSION_NAME.
         """
         if request is None:
             return None
@@ -69,3 +51,23 @@ class SessionAuth(Auth):
         if session_name is None:
             return None
         return request.cookies.get(session_name)
+
+    def current_user(self, request=None):
+        """
+        Return a User instance based on the session cookie.
+        """
+        if request is None:
+            return None
+
+        # Get session_id from cookie
+        session_id = self.session_cookie(request)
+        if session_id is None:
+            return None
+
+        # Get user_id linked to this session_id
+        user_id = self.user_id_for_session_id(session_id)
+        if user_id is None:
+            return None
+
+        # Retrieve User instance from database
+        return User.get(user_id)
