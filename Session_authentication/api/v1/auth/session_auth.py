@@ -19,25 +19,16 @@ class SessionAuth(Auth):
     user_id_by_session_id = {}
 
     def create_session(self, user_id: str = None) -> str:
-        """
-        Create a session ID for a given user_id.
-        """
-        if user_id is None:
+        """Create a session ID for a given user_id."""
+        if user_id is None or not isinstance(user_id, str):
             return None
-        if not isinstance(user_id, str):
-            return None
-
         session_id = str(uuid.uuid4())
         SessionAuth.user_id_by_session_id[session_id] = user_id
         return session_id
 
     def user_id_for_session_id(self, session_id: str = None) -> str:
-        """
-        Retrieve a user ID based on a given session ID.
-        """
-        if session_id is None:
-            return None
-        if not isinstance(session_id, str):
+        """Retrieve a user ID based on a given session ID."""
+        if session_id is None or not isinstance(session_id, str):
             return None
         return SessionAuth.user_id_by_session_id.get(session_id)
 
@@ -58,16 +49,28 @@ class SessionAuth(Auth):
         """
         if request is None:
             return None
-
-        # Get session_id from cookie
         session_id = self.session_cookie(request)
         if session_id is None:
             return None
-
-        # Get user_id linked to this session_id
         user_id = self.user_id_for_session_id(session_id)
         if user_id is None:
             return None
-
-        # Retrieve User instance from database
         return User.get(user_id)
+
+    def destroy_session(self, request=None):
+        """
+        Deletes the user session (logout).
+
+        Returns:
+            True if the session was successfully destroyed, False otherwise.
+        """
+        if request is None:
+            return False
+        session_id = self.session_cookie(request)
+        if session_id is None:
+            return False
+        if self.user_id_for_session_id(session_id) is None:
+            return False
+        # Remove the session ID from the mapping
+        del SessionAuth.user_id_by_session_id[session_id]
+        return True
