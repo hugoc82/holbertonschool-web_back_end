@@ -4,6 +4,7 @@ Session Authentication module
 """
 
 from api.v1.auth.auth import Auth
+from os import getenv
 import uuid
 
 
@@ -56,3 +57,15 @@ class SessionAuth(Auth):
             return None
 
         return SessionAuth.user_id_by_session_id.get(session_id)
+
+    def session_cookie(self, request=None):
+        """
+        Returns the value of the cookie named by the env var SESSION_NAME
+        from the request cookies.
+        """
+        if request is None:
+            return None
+        session_name = getenv('SESSION_NAME')
+        if session_name is None:
+            return None
+        return request.cookies.get(session_name)
