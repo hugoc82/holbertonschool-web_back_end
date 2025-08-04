@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Module d'authentification :
-contient les fonctions de hachage et d'enregistrement d'utilisateurs.
+contient les fonctions de hachage, d'enregistrement et de validation.
 """
 
 import bcrypt
@@ -41,3 +41,15 @@ class Auth:
         except NoResultFound:
             hashed_pwd = _hash_password(password)
             return self._db.add_user(email, hashed_pwd)
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """
+        Vérifie si un email et un mot de passe sont valides.
+        Retourne True si les identifiants sont corrects, False sinon.
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+            return bcrypt.checkpw(password.encode('utf-8'),
+                                  user.hashed_password)
+        except (NoResultFound, Exception):
+            return False
