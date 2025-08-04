@@ -20,14 +20,16 @@ class DB:
 
     def __init__(self) -> None:
         """Initialise une nouvelle instance de DB avec SQLite"""
-        self._engine = create_engine("sqlite:///a.db", echo=False)  # <-- corrigé ici
+        self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
 
     @property
     def _session(self) -> Session:
-        """Retourne une session SQLAlchemy, une seule fois (memoization)."""
+        """
+        Retourne une session SQLAlchemy, créée une seule fois (mémoïsée).
+        """
         if self.__session is None:
             DBSession = sessionmaker(bind=self._engine)
             self.__session = DBSession()
@@ -36,7 +38,7 @@ class DB:
     def add_user(self, email: str, hashed_password: str) -> User:
         """
         Crée un utilisateur avec email et mot de passe haché.
-        L'utilisateur est sauvegardé et retourné.
+        Enregistre et retourne l'objet User.
         """
         user = User(email=email, hashed_password=hashed_password)
         self._session.add(user)
@@ -45,9 +47,9 @@ class DB:
 
     def find_user_by(self, **kwargs) -> User:
         """
-        Recherche un utilisateur avec des filtres dynamiques.
+        Recherche un utilisateur via des filtres dynamiques.
         Lève NoResultFound si aucun résultat,
-        Lève InvalidRequestError si filtre invalide.
+        Lève InvalidRequestError si les champs sont invalides.
         """
         if not kwargs:
             raise InvalidRequestError("Aucun filtre fourni.")
@@ -59,3 +61,17 @@ class DB:
         except InvalidRequestError:
             raise InvalidRequestError("Requête invalide.")
         return user
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """
+        Met à jour les attributs d'un utilisateur identifié par user_id.
+        Lève ValueError si une clé ne correspond à aucun attribut de User.
+        """
+        user = self.find_user_by(id=user_id)
+
+        for key, value in kwargs.items():
+            if not hasattr(user, key):
+                raise ValueError(f"'{key}' n'est pas un attribut valide de User")
+            setattr(user, key, value)
+
+        self._session.commit()
