@@ -3,7 +3,7 @@
 Application Flask pour l'authentification des utilisateurs.
 """
 
-from flask import Flask, jsonify, request, abort, make_response
+from flask import Flask, jsonify, request, abort, make_response, redirect
 from auth import Auth
 
 app = Flask(__name__)
@@ -22,7 +22,6 @@ def welcome() -> str:
 def users() -> tuple:
     """
     Route POST /users : enregistre un nouvel utilisateur.
-    Retourne un message de confirmation ou d'erreur.
     """
     email = request.form.get("email")
     password = request.form.get("password")
@@ -40,9 +39,8 @@ def users() -> tuple:
 @app.route("/sessions", methods=["POST"])
 def login() -> str:
     """
-    Route POST /sessions : connecte un utilisateur si les
-    identifiants sont valides. Retourne un message JSON et
-    définit un cookie session_id. Sinon, renvoie une 401.
+    Route POST /sessions : connecte un utilisateur.
+    Retourne un message JSON + cookie de session.
     """
     email = request.form.get("email")
     password = request.form.get("password")
@@ -63,6 +61,23 @@ def login() -> str:
     }))
     response.set_cookie("session_id", session_id)
     return response
+
+
+@app.route("/sessions", methods=["DELETE"])
+def logout() -> str:
+    """
+    Route DELETE /sessions : déconnecte l'utilisateur.
+    Supprime la session et redirige vers /. Si aucun utilisateur,
+    retourne 403.
+    """
+    session_id = request.cookies.get("session_id")
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if user is None:
+        abort(403)
+
+    AUTH.destroy_session(user.id)
+    return redirect("/")
 
 
 if __name__ == "__main__":
