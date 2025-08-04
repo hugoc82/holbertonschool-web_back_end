@@ -71,9 +71,8 @@ class DB:
 
         for key, value in kwargs.items():
             if not hasattr(user, key):
-                raise ValueError(
-                    f"'{key}' n'est pas un attribut valide de User"
-                )
+                msg = f"'{key}' n'est pas un attribut valide de User"
+                raise ValueError(msg)
             setattr(user, key, value)
 
         self._session.commit()
