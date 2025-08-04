@@ -1,41 +1,55 @@
 #!/usr/bin/env python3
 """
-Application Flask pour l'enregistrement des utilisateurs.
+Module d'authentification :
+contient les fonctions de hachage, d'enregistrement et de validation.
 """
 
-from flask import Flask, jsonify, request
-from auth import Auth
+import bcrypt
+from db import DB
+from user import User
+from sqlalchemy.orm.exc import NoResultFound
 
-app = Flask(__name__)
-AUTH = Auth()
 
-
-@app.route("/", methods=["GET"])
-def welcome() -> str:
+def _hash_password(password: str) -> bytes:
     """
-    Route de base : retourne un message de bienvenue.
+    Hash le mot de passe fourni avec un sel, en utilisant bcrypt.
+    Retourne le hachage sous forme de bytes.
     """
-    return jsonify({"message": "Bienvenue"})
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
 
-@app.route("/users", methods=["POST"])
-def users() -> tuple:
+class Auth:
     """
-    Route POST /users : enregistre un nouvel utilisateur.
-    Retourne un JSON de confirmation ou une erreur si déjà inscrit.
+    Classe Auth : gère les opérations d'authentification des utilisateurs.
     """
-    email = request.form.get("email")
-    password = request.form.get("password")
 
-    try:
-        user = AUTH.register_user(email, password)
-        return jsonify({
-            "email": user.email,
-            "message": "user created"
-        }), 200
-    except ValueError:
-        return jsonify({"message": "email already registered"}), 400
+    def __init__(self) -> None:
+        """
+        Initialise une nouvelle instance d'Auth avec une base DB privée.
+        """
+        self._db = DB()
 
+    def register_user(self, email: str, password: str) -> User:
+        """
+        Enregistre un nouvel utilisateur avec email et mot de passe.
+        Lève ValueError si l'utilisateur existe déjà.
+        Retourne l'objet User sinon.
+        """
+        try:
+            self._db.find_user_by(email=email)
+            raise ValueError(f"User {email} already exists")
+        except NoResultFound:
+            hashed_pwd = _hash_password(password)
+            return self._db.add_user(email, hashed_pwd)
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    def valid_login(self, email: str, password: str) -> bool:
+        """
+        Vérifie si un email et un mot de passe sont valides.
+        Retourne True si les identifiants sont corrects, False sinon.
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+            return bcrypt.checkpw(password.encode('utf-8'),
+                                  user.hashed_password)
+        except (NoResultFound, Exception):
+            return False
