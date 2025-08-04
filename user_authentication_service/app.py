@@ -94,5 +94,26 @@ def profile() -> str:
     return jsonify({"email": user.email}), 200
 
 
+@app.route("/reset_password", methods=["POST"])
+def get_reset_password_token() -> str:
+    """
+    Route POST /reset_password : génère un token pour réinitialiser
+    le mot de passe. Retourne un JSON avec le token ou 403 si l'email
+    n'est pas enregistré.
+    """
+    email = request.form.get("email")
+    if not email:
+        abort(403)
+
+    try:
+        token = AUTH.get_reset_password_token(email)
+        return jsonify({
+            "email": email,
+            "reset_token": token
+        }), 200
+    except ValueError:
+        abort(403)
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
