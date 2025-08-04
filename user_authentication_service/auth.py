@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Module d'authentification :
-contient les fonctions de hachage, de session et d'identification utilisateur.
+gestion des utilisateurs, sessions, mots de passe et identifiants.
 """
 
 import bcrypt
@@ -77,7 +77,8 @@ class Auth:
         except NoResultFound:
             return None
 
-    def get_user_from_session_id(self, session_id: str) -> Optional[User]:
+    def get_user_from_session_id(self,
+                                 session_id: str) -> Optional[User]:
         """
         Retourne l'utilisateur correspondant au session_id donné.
         Si aucun utilisateur ou session invalide, retourne None.
@@ -88,3 +89,13 @@ class Auth:
             return self._db.find_user_by(session_id=session_id)
         except NoResultFound:
             return None
+
+    def destroy_session(self, user_id: int) -> None:
+        """
+        Supprime la session d'un utilisateur en mettant session_id à None.
+        Ne retourne rien.
+        """
+        try:
+            self._db.update_user(user_id, session_id=None)
+        except Exception:
+            pass
