@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """
-Module d'authentification : contient les fonctions liées au hash des mots de passe.
+Module d'authentification :
+contient les fonctions de hachage et d'enregistrement d'utilisateurs.
 """
 
 import bcrypt
+from db import DB
+from user import User
+from sqlalchemy.orm.exc import NoResultFound
 
 
 def _hash_password(password: str) -> bytes:
@@ -12,3 +16,28 @@ def _hash_password(password: str) -> bytes:
     Retourne le hachage sous forme de bytes.
     """
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+
+class Auth:
+    """
+    Classe Auth : gère les opérations d'authentification des utilisateurs.
+    """
+
+    def __init__(self) -> None:
+        """
+        Initialise une nouvelle instance d'Auth avec une base DB privée.
+        """
+        self._db = DB()
+
+    def register_user(self, email: str, password: str) -> User:
+        """
+        Enregistre un nouvel utilisateur avec email et mot de passe.
+        Lève ValueError si l'utilisateur existe déjà.
+        Retourne l'objet User sinon.
+        """
+        try:
+            self._db.find_user_by(email=email)
+            raise ValueError(f"User {email} already exists")
+        except NoResultFound:
+            hashed_pwd = _hash_password(password)
+            return self._db.add_user(email, hashed_pwd)
