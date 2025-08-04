@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
 Module d'authentification :
-contient les fonctions de hachage, d'enregistrement et de validation.
+contient les fonctions de hachage, d'enregistrement et de gestion de session.
 """
 
 import bcrypt
 import uuid
+from typing import Optional
 from db import DB
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
@@ -62,3 +63,13 @@ class Auth:
                                   user.hashed_password)
         except (NoResultFound, Exception):
             return False
+
+    def create_session(self, email: str) -> Optional[str]:
+        """
+        Crée une session pour l'utilisateur donné si trouvé.
+        Retourne l'identifiant de session (UUID), ou None si l'utilisateur
+        n'existe pas.
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+            session_i_
