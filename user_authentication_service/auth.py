@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Module d'authentification :
-gestion des utilisateurs, sessions, mots de passe et identifiants.
+gestion des utilisateurs, sessions, mots de passe et réinitialisations.
 """
 
 import bcrypt
@@ -99,3 +99,18 @@ class Auth:
             self._db.update_user(user_id, session_id=None)
         except Exception:
             pass
+
+    def get_reset_password_token(self, email: str) -> str:
+        """
+        Génère un token de réinitialisation de mot de passe pour un email donné.
+        Lève ValueError si l'utilisateur n'existe pas.
+        Retourne le token UUID généré.
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            raise ValueError
+
+        token = _generate_uuid()
+        self._db.update_user(user.id, reset_token=token)
+        return token
