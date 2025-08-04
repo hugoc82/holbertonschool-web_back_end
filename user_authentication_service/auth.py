@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Module d'authentification :
-contient les fonctions de hachage, d'enregistrement et de gestion de session.
+contient les fonctions de hachage, de session et d'identification utilisateur.
 """
 
 import bcrypt
@@ -67,13 +67,24 @@ class Auth:
     def create_session(self, email: str) -> Optional[str]:
         """
         Crée une session pour l'utilisateur donné si trouvé.
-        Retourne l'identifiant de session (UUID), ou None si l'utilisateur
-        n'existe pas.
+        Retourne l'identifiant de session (UUID), ou None si non trouvé.
         """
         try:
             user = self._db.find_user_by(email=email)
             session_id = _generate_uuid()
             self._db.update_user(user.id, session_id=session_id)
             return session_id
+        except NoResultFound:
+            return None
+
+    def get_user_from_session_id(self, session_id: str) -> Optional[User]:
+        """
+        Retourne l'utilisateur correspondant au session_id donné.
+        Si aucun utilisateur ou session invalide, retourne None.
+        """
+        if session_id is None:
+            return None
+        try:
+            return self._db.find_user_by(session_id=session_id)
         except NoResultFound:
             return None
