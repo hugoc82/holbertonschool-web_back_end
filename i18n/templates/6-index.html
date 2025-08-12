@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{{ _('home_title') }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <h1>{{ _('home_header') }}</h1>
+
+    {% if g.user %}
+      <p>{{ _('logged_in_as', username=g.user['name']) }}</p>
+    {% else %}
+      <p>{{ _('not_logged_in') }}</p>
+    {% endif %}
+
+    <!-- Exemples:
+      - ?login_as=1  -> user 'Balou' (fr)
+      - ?login_as=2  -> user 'Beyonce' (en)
+      - ?locale=fr   -> force FR
+      - ?locale=en   -> force EN
+      - combinaison: ?login_as=2&locale=fr -> FR (URL prioritaire)
+    -->
+  </body>
+</html>
