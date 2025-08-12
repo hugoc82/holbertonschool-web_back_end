@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""Tests unitaires pour client.GithubOrgClient (exos 4 à 7)."""
+"""Tests unitaires et d'intégration pour GithubOrgClient."""
 
 import unittest
-from unittest.mock import patch, PropertyMock
-from parameterized import parameterized
+from unittest.mock import patch, PropertyMock, Mock
+from parameterized import parameterized, parameterized_class
 
 from client import GithubOrgClient
+from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Tests pour la classe GithubOrgClient."""
+    """Tests pour la classe GithubOrgClient (exos 4 à 7)."""
 
     @parameterized.expand([
         ("google",),
@@ -80,6 +81,55 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(
             GithubOrgClient.has_license(repo, license_key),
             expected
+        )
+
+
+@parameterized_class((
+    "org_payload",
+    "repos_payload",
+    "expected_repos",
+    "apache2_repos",
+), TEST_PAYLOAD)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Tests d'intégration pour GithubOrgClient.public_repos (exo 8)."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        """Patch requests.get pour renvoyer les fixtures attendues."""
+        cls.get_patcher = patch("requests.get")
+        mock_get = cls.get_patcher.start()
+
+        def side_effect(url, *args, **kwargs):
+            response = Mock()
+            # Requête des infos d'org (ORG_URL) -> org_payload
+            if url.startswith("https://api.github.com/orgs/") and \
+               not url.endswith("/repos"):
+                response.json.return_value = cls.org_payload
+            # Requête des repos de l'org -> repos_payload
+            elif url == cls.org_payload.get("repos_url"):
+                response.json.return_value = cls.repos_payload
+            else:
+                response.json.return_value = {}
+            return response
+
+        mock_get.side_effect = side_effect
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        """Stoppe le patcher requests.get."""
+        cls.get_patcher.stop()
+
+    def test_public_repos(self) -> None:
+        """Sans filtre de licence, retourne la liste attendue."""
+        client = GithubOrgClient("google")
+        self.assertEqual(client.public_repos(), self.expected_repos)
+
+    def test_public_repos_with_license(self) -> None:
+        """Avec filtre 'apache-2.0', retourne la liste attendue."""
+        client = GithubOrgClient("google")
+        self.assertEqual(
+            client.public_repos(license="apache-2.0"),
+            self.apache2_repos
         )
 
 
