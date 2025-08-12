@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests unitaires pour client.GithubOrgClient (exos 4 et 5)."""
+"""Tests unitaires pour client.GithubOrgClient (exos 4 à 6)."""
 
 import unittest
 from unittest.mock import patch, PropertyMock
@@ -41,6 +41,30 @@ class TestGithubOrgClient(unittest.TestCase):
             client = GithubOrgClient("google")
             self.assertEqual(client._public_repos_url, payload["repos_url"])
             mock_org.assert_called_once()
+
+    @patch("client.get_json")
+    def test_public_repos(self, mock_get_json) -> None:
+        """Vérifie public_repos avec mocks de l'URL et de get_json."""
+        repos_payload = [
+            {"name": "episodes.dart"},
+            {"name": "cpp-netlib"},
+        ]
+        mock_get_json.return_value = repos_payload
+
+        url = "http://example.com/orgs/google/repos"
+        with patch.object(
+            GithubOrgClient,
+            "_public_repos_url",
+            new_callable=PropertyMock,
+            return_value=url
+        ) as mock_url:
+            client = GithubOrgClient("google")
+            self.assertEqual(
+                client.public_repos(),
+                ["episodes.dart", "cpp-netlib"]
+            )
+            mock_url.assert_called_once()
+            mock_get_json.assert_called_once_with(url)
 
 
 if __name__ == "__main__":
