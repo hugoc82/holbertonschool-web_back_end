@@ -1,32 +1,92 @@
 #!/usr/bin/env python3
-"""Tests unitaires pour client.GithubOrgClient (exo 4)."""
+"""Tests unitaires pour utils."""
 
 import unittest
-from unittest.mock import patch
+from typing import Any, Mapping, Sequence
+from unittest.mock import patch, Mock
 from parameterized import parameterized
 
-from client import GithubOrgClient
+from utils import access_nested_map, get_json, memoize
 
 
-class TestGithubOrgClient(unittest.TestCase):
-    """Tests pour la classe GithubOrgClient."""
+class TestAccessNestedMap(unittest.TestCase):
+    """Tests pour access_nested_map."""
 
     @parameterized.expand([
-        ("google",),
-        ("abc",),
+        ({"a": 1}, ("a",), 1),
+        ({"a": {"b": 2}}, ("a",), {"b": 2}),
+        ({"a": {"b": 2}}, ("a", "b"), 2),
     ])
-    @patch("client.get_json")
-    def test_org(self, org_name: str, mock_get_json) -> None:
-        """Vérifie que .org renvoie la valeur attendue et appelle get_json."""
-        expected = {"login": org_name}
-        mock_get_json.return_value = expected
+    def test_access_nested_map(
+        self,
+        nested_map: Mapping[str, Any],
+        path: Sequence[str],
+        expected: Any
+    ) -> None:
+        self.assertEqual(access_nested_map(nested_map, path), expected)
 
-        client = GithubOrgClient(org_name)
-        self.assertEqual(client.org, expected)
-
-        mock_get_json.assert_called_once_with(
-            f"https://api.github.com/orgs/{org_name}"
+    @parameterized.expand([
+        ({}, ("a",)),
+        ({"a": 1}, ("a", "b")),
+    ])
+    def test_access_nested_map_exception(
+        self,
+        nested_map: Mapping[str, Any],
+        path: Sequence[str],
+    ) -> None:
+        with self.assertRaises(KeyError) as cm:
+            access_nested_map(nested_map, path)
+        self.assertEqual(
+            str(cm.exception),
+            repr(path[-1])
         )
+
+
+class TestGetJson(unittest.TestCase):
+    """Tests pour la fonction utilitaire get_json."""
+
+    @parameterized.expand([
+        ("http://example.com", {"payload": True}),
+        ("http://holberton.io", {"payload": False}),
+    ])
+    @patch("utils.requests.get")
+    def test_get_json(
+        self,
+        test_url: str,
+        test_payload: dict,
+        mock_get: Mock
+    ) -> None:
+        mock_response = Mock()
+        mock_response.json.return_value = test_payload
+        mock_get.return_value = mock_response
+
+        result = get_json(test_url)
+
+        mock_get.assert_called_once_with(test_url)
+        self.assertEqual(result, test_payload)
+
+
+class TestMemoize(unittest.TestCase):
+    """Tests pour le décorateur memoize."""
+
+    def test_memoize(self) -> None:
+        class TestClass:
+            def a_method(self) -> int:
+                return 42
+
+            @memoize
+            def a_property(self) -> int:
+                return self.a_method()
+
+        with patch.object(
+            TestClass,
+            "a_method",
+            return_value=42
+        ) as mock_method:
+            obj = TestClass()
+            self.assertEqual(obj.a_property, 42)
+            self.assertEqual(obj.a_property, 42)
+            mock_method.assert_called_once()
 
 
 if __name__ == "__main__":
