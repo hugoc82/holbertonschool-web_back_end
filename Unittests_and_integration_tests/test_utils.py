@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests unitaires pour utils.access_nested_map (exo 1)."""
+"""Tests unitaires pour utils.access_nested_map."""
 
 import unittest
 from typing import Any, Mapping, Sequence
@@ -23,6 +23,20 @@ class TestAccessNestedMap(unittest.TestCase):
         expected: Any
     ) -> None:
         self.assertEqual(access_nested_map(nested_map, path), expected)
+
+    @parameterized.expand([
+        ({}, ("a",)),
+        ({"a": 1}, ("a", "b")),
+    ])
+    def test_access_nested_map_exception(
+        self,
+        nested_map: Mapping[str, Any],
+        path: Sequence[str],
+    ) -> None:
+        with self.assertRaises(KeyError) as cm:
+            access_nested_map(nested_map, path)
+        # Le message d'erreur d'un KeyError est la clé manquante (repr)
+        self.assertEqual(str(cm.exception), repr(path[-1]))
 
 
 if __name__ == "__main__":
