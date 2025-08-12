@@ -36,7 +36,10 @@ class TestAccessNestedMap(unittest.TestCase):
     ) -> None:
         with self.assertRaises(KeyError) as cm:
             access_nested_map(nested_map, path)
-        self.assertEqual(str(cm.exception), repr(path[-1]))
+        self.assertEqual(
+            str(cm.exception),
+            repr(path[-1])
+        )
 
 
 class TestGetJson(unittest.TestCase):
@@ -47,7 +50,12 @@ class TestGetJson(unittest.TestCase):
         ("http://holberton.io", {"payload": False}),
     ])
     @patch("utils.requests.get")
-    def test_get_json(self, test_url: str, test_payload: dict, mock_get: Mock) -> None:
+    def test_get_json(
+        self,
+        test_url: str,
+        test_payload: dict,
+        mock_get: Mock
+    ) -> None:
         mock_response = Mock()
         mock_response.json.return_value = test_payload
         mock_get.return_value = mock_response
@@ -70,11 +78,15 @@ class TestMemoize(unittest.TestCase):
             def a_property(self) -> int:
                 return self.a_method()
 
-        with patch.object(TestClass, "a_method", return_value=42) as mock_method:
+        with patch.object(
+            TestClass,
+            "a_method",
+            return_value=42
+        ) as mock_method:
             obj = TestClass()
-            self.assertEqual(obj.a_property, 42)  # premier accès -> appelle a_method
-            self.assertEqual(obj.a_property, 42)  # second accès -> valeur mémoïsée
-            mock_method.assert_called_once()      # a_method appelé une seule fois
+            self.assertEqual(obj.a_property, 42)
+            self.assertEqual(obj.a_property, 42)
+            mock_method.assert_called_once()
 
 
 if __name__ == "__main__":
