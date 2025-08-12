@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Tests unitaires pour client.GithubOrgClient (exo 4)."""
+"""Tests unitaires pour client.GithubOrgClient (exos 4 et 5)."""
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, PropertyMock
 from parameterized import parameterized
 
 from client import GithubOrgClient
@@ -27,6 +27,20 @@ class TestGithubOrgClient(unittest.TestCase):
         mock_get_json.assert_called_once_with(
             f"https://api.github.com/orgs/{org_name}"
         )
+
+    def test_public_repos_url(self) -> None:
+        """Vérifie _public_repos_url à partir d'un payload mocké."""
+        payload = {"repos_url": "https://api.github.com/orgs/google/repos"}
+
+        with patch.object(
+            GithubOrgClient,
+            "org",
+            new_callable=PropertyMock,
+            return_value=payload
+        ) as mock_org:
+            client = GithubOrgClient("google")
+            self.assertEqual(client._public_repos_url, payload["repos_url"])
+            mock_org.assert_called_once()
 
 
 if __name__ == "__main__":
