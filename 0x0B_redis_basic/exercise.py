@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
 """
-Fichier principal
+Redis basic: module providing a Cache class.
 """
 import redis
-from exercise import Cache
+from typing import Union
+from uuid import uuid4
 
-cache = Cache()
 
-data = b"bonjour"
-key = cache.store(data)
-print("Clé générée :", key)
+class Cache:
+    """Simple cache wrapper over a Redis client."""
 
-local_redis = redis.Redis()
-print("Valeur retrouvée :", local_redis.get(key)
+    def __init__(self) -> None:
+        """Initialize the Redis client and flush the DB."""
+        self._redis = redis.Redis()
+        self._redis.flushdb()
+
+    def store(self, data: Union[str, bytes, int, float]) -> str:
+        """Store data in Redis and return the key."""
+        key = str(uuid4())
+        self._redis.set(key, data)
+        return key
