@@ -58,3 +58,4 @@ class Cache:
     def get_int(self, key: str) -> Optional[int]:
         """Retrieve an integer for the given key, or None."""
         return self.get(key, fn=int)  # type: ignore[return-value]
+
