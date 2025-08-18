@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
 Redis basic: module providing a Cache class to store and retrieve values,
-with call count tracking and call history stored in Redis.
+with call count tracking, call history, and a replay utility.
 
 - count_calls: increments a per-method counter using INCR.
 - call_history: records inputs and outputs in Redis lists.
+- replay: pretty-prints the history of a method's calls.
 - Cache.get / get_str / get_int: retrieve values with optional conversion.
 """
-from typing import Callable, Optional, TypeVar, Union
+from typing import Any, Callable, Optional, TypeVar, Union
 from uuid import uuid4
 import functools
 
@@ -16,7 +17,7 @@ import redis
 T = TypeVar("T")
 
 
-def count_calls(method: Callable) -> Callable:
+def count_calls(method: Callable[..., Any]) -> Callable[..., Any]:
     """Decorator to count how many times a method is called.
 
     It uses Redis INCR on the method's qualified name (__qualname__).
@@ -31,7 +32,7 @@ def count_calls(method: Callable) -> Callable:
     return wrapper
 
 
-def call_history(method: Callable) -> Callable:
+def call_history(method: Callable[..., Any]) -> Callable[..., Any]:
     """Decorator that stores inputs and outputs of a method in Redis.
 
     For a method with qualified name QN, two lists are used:
@@ -52,6 +53,39 @@ def call_history(method: Callable) -> Callable:
         return result
 
     return wrapper
+
+
+def replay(method: Callable[..., Any]) -> None:
+    """Display the call history of a method recorded by call_history/count_calls.
+
+    It reads:
+      - the total call count from key "<qualname>"
+      - inputs from list "<qualname>:inputs"
+      - outputs from list "<qualname>:outputs"
+    and prints them in a readable format.
+    """
+    qualname = method.__qualname__
+
+    # Try to use the same Redis instance when method is bound to a Cache
+    rds = getattr(getattr(method, "__self__", None), "_redis", None)
+    if rds is None:
+        rds = redis.Redis()
+
+    # Total calls
+    raw_count = rds.get(qualname)
+    count = int(raw_count) if raw_count is not None else 0
+    print(f"{qualname} was called {count} times:")
+
+    # Inputs and outputs
+    in_key = f"{qualname}:inputs"
+    out_key = f"{qualname}:outputs"
+    inputs = rds.lrange(in_key, 0, -1)
+    outputs = rds.lrange(out_key, 0, -1)
+
+    for raw_args, raw_out in zip(inputs, outputs):
+        args_str = raw_args.decode("utf-8")
+        out_str = raw_out.decode("utf-8")
+        print(f"{qualname}(*{args_str}) -> {out_str}")
 
 
 class Cache:
@@ -90,4 +124,3 @@ class Cache:
     def get_int(self, key: str) -> Optional[int]:
         """Retrieve an integer for the given key, or None."""
         return self.get(key, fn=int)  # type: ignore[return-value]
-
