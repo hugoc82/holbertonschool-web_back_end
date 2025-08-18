@@ -1,32 +1,41 @@
 #!/usr/bin/env python3
-"""
-Redis basic: module providing a Cache class to store and retrieve values.
-
-This module defines a Cache class that connects to a local Redis server
-and offers methods to store arbitrary data under a random key and get it
-back, optionally converting it to the original Python type.
+"""Redis basic: module providing a Cache class to store and retrieve values,
+with call count tracking via Redis.
 """
 from typing import Callable, Optional, TypeVar, Union
 from uuid import uuid4
+import functools
 
 import redis
 
 T = TypeVar("T")
 
 
-class Cache:
-    """Simple cache wrapper over a Redis client.
+def count_calls(method: Callable) -> Callable:
+    """Decorator to count how many times a method is called.
 
-    Upon initialization, it creates a Redis client connected to the
-    default local server and flushes the current database to provide a
-    clean state for exercises.
+    It uses the Redis INCR command to increment a counter stored under the
+    method's qualified name (``__qualname__``).
     """
+
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        key = method.__qualname__
+        self._redis.incr(key)
+        return method(self, *args, **kwargs)
+
+    return wrapper
+
+
+class Cache:
+    """Simple cache wrapper over a Redis client with call counting."""
 
     def __init__(self) -> None:
         """Initialize the Redis client and flush the database."""
         self._redis: redis.Redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """Store data in Redis under a random UUID key and return the key."""
         key: str = str(uuid4())
@@ -36,11 +45,7 @@ class Cache:
     def get(
         self, key: str, fn: Optional[Callable[[bytes], T]] = None
     ) -> Optional[Union[bytes, T]]:
-        """Retrieve a value by key and optionally convert its type.
-
-        If the key does not exist, return None. Otherwise return the raw
-        bytes from Redis, or the value transformed by ``fn`` when provided.
-        """
+        """Retrieve a value by key and optionally convert its type."""
         data = self._redis.get(key)
         if data is None:
             return None
