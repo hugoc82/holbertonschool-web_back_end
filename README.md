@@ -31,3 +31,7 @@ git clone https://github.com/hugoc82/holbertonschool-web_back_end.git
 cd holbertonschool-web_back_end
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt || true   # selon modules
+## À propos
+Dév : **Ton Nom Ici**
+Liens : [LinkedIn](https://www.linkedin.com/in/ton-handle/) · [GitHub](https://github.com/=repositories)
+
