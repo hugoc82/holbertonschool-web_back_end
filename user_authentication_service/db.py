@@ -1,3 +1,7 @@
+"""db.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """
 Module DB : gère la base de données des utilisateurs avec SQLAlchemy.
@@ -76,3 +80,4 @@ class DB:
             setattr(user, key, value)
 
         self._session.commit()
+

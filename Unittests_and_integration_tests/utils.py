@@ -1,3 +1,7 @@
+"""utils.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """Generic utilities for github org client.
 """

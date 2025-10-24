@@ -1,3 +1,7 @@
+"""session_auth.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """
 Session Authentication module
@@ -74,3 +78,4 @@ class SessionAuth(Auth):
         # Remove the session ID from the mapping
         del SessionAuth.user_id_by_session_id[session_id]
         return True
+

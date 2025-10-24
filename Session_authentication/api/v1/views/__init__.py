@@ -1,3 +1,7 @@
+"""__init__.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """ Blueprint configuration for API views
 """
@@ -14,3 +18,4 @@ from api.v1.views.session_auth import *  # <-- ajout pour l'étape 7
 
 # Load users from file
 User.load_from_file()
+

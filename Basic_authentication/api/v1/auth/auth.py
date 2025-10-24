@@ -1,3 +1,7 @@
+"""auth.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """ Authentication module
 """
@@ -37,3 +41,4 @@ class Auth:
         Return current user (not implemented)
         """
         return None
+

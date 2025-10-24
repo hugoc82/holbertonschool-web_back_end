@@ -1,3 +1,7 @@
+"""user.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """
 Ce module définit un modèle SQLAlchemy pour un utilisateur,
@@ -23,3 +27,4 @@ class User(Base):
     hashed_password: str = Column(String(250), nullable=False)
     session_id: str = Column(String(250), nullable=True)
     reset_token: str = Column(String(250), nullable=True)
+

@@ -1,3 +1,7 @@
+"""encrypt_password.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """Module for encrypting and validating passwords using bcrypt."""
 import bcrypt
@@ -28,3 +32,4 @@ def is_valid(hashed_password: bytes, password: str) -> bool:
         bool: True if the password matches the hash, False otherwise.
     """
     return bcrypt.checkpw(password.encode(), hashed_password)
+

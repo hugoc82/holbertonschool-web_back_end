@@ -1,3 +1,7 @@
+"""index.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """ Module of Index views
 """
@@ -36,3 +40,4 @@ def unauthorized() -> None:
 def forbidden() -> None:
     """ GET /api/v1/forbidden — trigger 403 """
     abort(403)
+

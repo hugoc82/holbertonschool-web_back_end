@@ -1,3 +1,7 @@
+"""main_2.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """ Main 2 - Test authentication requirement
 """
@@ -12,3 +16,4 @@ print(a.require_auth("/api/v1/status", ["/api/v1/status/", "/api/v1/stats/"]))
 print(a.require_auth("/api/v1/users", ["/api/v1/status/", "/api/v1/stats/"]))
 print(a.authorization_header())
 print(a.current_user())
+

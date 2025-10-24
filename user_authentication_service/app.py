@@ -1,3 +1,7 @@
+"""app.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """
 Application Flask pour l'authentification des utilisateurs.
@@ -141,3 +145,4 @@ def update_password() -> str:
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+

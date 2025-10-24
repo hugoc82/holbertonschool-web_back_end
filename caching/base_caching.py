@@ -1,3 +1,7 @@
+"""base_caching.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/python3
 """BaseCaching module"""
 
@@ -14,3 +18,4 @@ class BaseCaching():
         print("Current cache:")
         for key in self.cache_data:
             print(f"{key}: {self.cache_data[key]}")
+

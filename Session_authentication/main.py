@@ -1,3 +1,7 @@
+"""main.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """ Main 1
 """
@@ -12,3 +16,4 @@ print(a.require_auth("/api/v1/status/", ["/api/v1/status/"]))  # False
 print(a.require_auth("/api/v1/status", ["/api/v1/status/"]))  # False
 print(a.require_auth("/api/v1/users", ["/api/v1/status/"]))  # True
 print(a.require_auth("/api/v1/users", ["/api/v1/status/", "/api/v1/stats"]))  # True
+

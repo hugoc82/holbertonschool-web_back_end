@@ -1,3 +1,7 @@
+"""4-mru_cache.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/python3
 """4. MRU caching"""
 
@@ -41,3 +45,4 @@ class MRUCache(BaseCaching):
         self.usage_order.remove(key)
         self.usage_order.append(key)
         return self.cache_data[key]
+

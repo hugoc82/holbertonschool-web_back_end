@@ -1,3 +1,7 @@
+"""main_2.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """ Main 2
 """
@@ -47,3 +51,4 @@ print("{} => {}".format(session_1_bis, tmp_user_id))
 
 tmp_user_id = sa.user_id_for_session_id(session_1)
 print("{} => {}".format(session_1, tmp_user_id))
+

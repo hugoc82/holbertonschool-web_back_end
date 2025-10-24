@@ -1,3 +1,7 @@
+"""6-app.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """Flask app using user locale preference (step 6).
 
@@ -88,3 +92,4 @@ def index() -> str:
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+

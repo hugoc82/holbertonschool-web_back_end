@@ -1,3 +1,7 @@
+"""exercise.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """
 Redis basic: module providing a Cache class to store and retrieve values,
@@ -124,3 +128,4 @@ class Cache:
     def get_int(self, key: str) -> Optional[int]:
         """Retrieve an integer for the given key, or None."""
         return self.get(key, fn=int)  # type: ignore[return-value]
+

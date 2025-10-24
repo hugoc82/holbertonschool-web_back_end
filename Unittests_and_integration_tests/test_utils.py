@@ -1,3 +1,7 @@
+"""test_utils.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """Tests unitaires pour utils."""
 
@@ -91,3 +95,4 @@ class TestMemoize(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -1,3 +1,7 @@
+"""main_6.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """ Main 6
 """
@@ -18,3 +22,4 @@ user.save()
 basic_clear = "{}:{}".format(user_email, user_clear_pwd)
 basic_encoded = base64.b64encode(basic_clear.encode('utf-8')).decode("utf-8")
 print("Basic Base64: {}".format(basic_encoded))
+

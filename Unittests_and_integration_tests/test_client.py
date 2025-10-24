@@ -1,3 +1,7 @@
+"""test_client.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """Tests unitaires et d'intégration pour GithubOrgClient."""
 
@@ -135,3 +139,4 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

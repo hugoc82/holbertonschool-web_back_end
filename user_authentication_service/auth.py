@@ -1,3 +1,7 @@
+"""auth.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """
 Module d'authentification :
@@ -132,3 +136,4 @@ class Auth:
         self._db.update_user(user.id,
                              hashed_password=hashed,
                              reset_token=None)
+

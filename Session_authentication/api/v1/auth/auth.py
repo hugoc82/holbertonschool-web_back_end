@@ -1,3 +1,7 @@
+"""auth.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """
 Authentication module
@@ -48,3 +52,4 @@ class Auth:
         if session_name is None:
             return None
         return request.cookies.get(session_name)
+

@@ -1,3 +1,7 @@
+"""4-main.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/python3
 """ 4-main """
 MRUCache = __import__('4-mru_cache').MRUCache
@@ -28,3 +32,4 @@ my_cache.put("J", "J")
 my_cache.print_cache()
 my_cache.put("K", "K")
 my_cache.print_cache()
+

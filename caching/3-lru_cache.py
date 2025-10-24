@@ -1,3 +1,7 @@
+"""3-lru_cache.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/python3
 """3. LRU caching"""
 
@@ -38,3 +42,4 @@ class LRUCache(BaseCaching):
         self.usage_order.remove(key)
         self.usage_order.append(key)
         return self.cache_data[key]
+

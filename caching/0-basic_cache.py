@@ -1,3 +1,7 @@
+"""0-basic_cache.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/python3
 """0. Basic dictionary caching"""
 
@@ -18,3 +22,4 @@ class BasicCache(BaseCaching):
     def get(self, key):
         """Return the value in cache_data linked to key"""
         return self.cache_data.get(key, None)
+

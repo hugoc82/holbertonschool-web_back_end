@@ -1,3 +1,7 @@
+"""filtered_logger.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """Module that filters sensitive data and manages secure logging/database."""
 import re
@@ -99,3 +103,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

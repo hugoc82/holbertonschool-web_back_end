@@ -1,3 +1,7 @@
+"""base.py: module documentation.
+Author: Ton Nom Ici
+Date: 2025-10-24
+"""
 #!/usr/bin/env python3
 """ Base module
 """
@@ -135,3 +139,4 @@ class Base():
             return True
         
         return list(filter(_search, DATA[s_class].values()))
+
