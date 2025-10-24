@@ -1,37 +1,38 @@
-# holbertonschool-web_back_end
+﻿# holbertonschool-web_back_end
 
-## 👤 About the Developer
-Je m’appelle hugo CAPELLE, développeur back-end (Python/JS).  
-Connecte-toi : [LinkedIn](www.linkedin.com/in/hugo-capelle-1b0780394)· [Portfolio Project Repo](https://github.com/<user>/<portfolio-repo>)
+## ðŸ‘¤ About the Developer
+Je mâ€™appelle hugo CAPELLE, dÃ©veloppeur back-end (Python/JS).  
+Connecte-toi : [LinkedIn](www.linkedin.com/in/hugo-capelle-1b0780394)Â· [Portfolio Project Repo](https://github.com/<user>/<portfolio-repo>)
 
-## 🌟 Pourquoi ce projet ?
-Ce monorepo regroupe mes modules back-end d’école (API, auth, persistance, tests, perf). L’objectif : couvrir les fondamentaux **Python + écosystème web** avec des exos concrets et reproductibles.
+## ðŸŒŸ Pourquoi ce projet ?
+Ce monorepo regroupe mes modules back-end dâ€™Ã©cole (API, auth, persistance, tests, perf). Lâ€™objectif : couvrir les fondamentaux **Python + Ã©cosystÃ¨me web** avec des exos concrets et reproductibles.
 
-## 📖 L’histoire
-Parti d’exos isolés, j’ai unifié la structure, normalisé les scripts et documenté les workflows (tests, lint, run). Ça m’a appris à **industrialiser** des mini-projets hétérogènes.
+## ðŸ“– Lâ€™histoire
+Parti dâ€™exos isolÃ©s, jâ€™ai unifiÃ© la structure, normalisÃ© les scripts et documentÃ© les workflows (tests, lint, run). Ã‡a mâ€™a appris Ã  **industrialiser** des mini-projets hÃ©tÃ©rogÃ¨nes.
 
-## ✅ Fonctionnalités (par modules)
+## âœ… FonctionnalitÃ©s (par modules)
 - [x] **Auth** : basic/session/token, gestion users (./user_authentication_service)  
-- [x] **Persistance** : MySQL avancé (./MySQL_Advanced)  
+- [x] **Persistance** : MySQL avancÃ© (./MySQL_Advanced)  
 - [x] **Cache** : notions Redis (./0x0B_redis_basic, ./caching)  
 - [x] **i18n** : internationalisation (./i18n)  
 - [x] **Queues** : file de messages JS (./queuing_system_in_js)  
 - [x] **Tests** : unit & integration (./Unittests_and_integration_tests, ./unittests_in_js)  
-- [x] **Données perso** : obfuscation/logging (./personal_data)
+- [x] **DonnÃ©es perso** : obfuscation/logging (./personal_data)
 
-## 🔜 Roadmap
+## ðŸ”œ Roadmap
 - [ ] Docker Compose pour MySQL + Redis  
 - [ ] Benchmarks et profiling  
 - [ ] CI GitHub Actions (lint + tests)
 
-## 🚀 Installation
-**Prérequis** : Python 3.10+, Node 18+, Redis/MySQL si modules concernés.
+## ðŸš€ Installation
+**PrÃ©requis** : Python 3.10+, Node 18+, Redis/MySQL si modules concernÃ©s.
 ```bash
 git clone https://github.com/hugoc82/holbertonschool-web_back_end.git
 cd holbertonschool-web_back_end
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt || true   # selon modules
-## � propos
-D�v : **Ton Nom Ici**
-Liens : [LinkedIn](https://www.linkedin.com/in/ton-handle/) � [GitHub](https://github.com/=repositories)
+## À propos
+Dév : **Ton Nom Ici**
+Liens : [LinkedIn](https://www.linkedin.com/in/ton-handle/) · [GitHub](https://github.com/=repositories)
+
 
